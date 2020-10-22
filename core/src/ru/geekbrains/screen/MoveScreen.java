@@ -13,8 +13,6 @@ public class MoveScreen extends BaseScreen {
     private Vector2 movementPosition;
     private Vector2 move;
 
-    private boolean routeBuilt = false;
-
     @Override
     public void show() {
         super.show();
@@ -34,9 +32,8 @@ public class MoveScreen extends BaseScreen {
         batch.draw(imgStart, currentPosition.x, currentPosition.y);
         batch.end();
 
-        if (currentPosition.epsilonEquals(movementPosition, 1) && routeBuilt) {
+        if (currentPosition.epsilonEquals(movementPosition, 1)) {
             move.setZero();
-            routeBuilt = false;
         }
 
         currentPosition.add(move);
@@ -49,11 +46,8 @@ public class MoveScreen extends BaseScreen {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (!routeBuilt) {
-            movementPosition.set(screenX, Gdx.graphics.getHeight() - screenY);
-            move.set(new Vector2(movementPosition).sub(currentPosition).nor());
-            routeBuilt = true;
-        }
+        movementPosition.set(screenX, Gdx.graphics.getHeight() - screenY);
+        move.set(new Vector2(movementPosition).sub(currentPosition).nor());
         return super.touchDown(screenX, screenY, pointer, button);
     }
 

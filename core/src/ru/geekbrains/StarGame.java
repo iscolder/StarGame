@@ -9,6 +9,6 @@ public class StarGame extends Game {
 
 	@Override
 	public void create() {
-		setScreen(new MoveScreen());
+		setScreen(new MenuScreen());
 	}
 }
