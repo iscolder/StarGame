@@ -16,11 +16,11 @@ public class BaseScreen implements Screen, InputProcessor {
 
     protected SpriteBatch batch;
     private Rect screenBounds;
-    private Rect worldBounds;
+    protected Rect worldBounds;
     private Rect glBounds;
 
     private Matrix4 worldToGl;
-    private Matrix3 screenToWorld;
+    protected Matrix3 screenToWorld;
 
     private Vector2 touch;
 
@@ -31,15 +31,17 @@ public class BaseScreen implements Screen, InputProcessor {
         screenBounds = new Rect();
         worldBounds = new Rect();
         glBounds = new Rect(0, 0, 1f, 1f);
+
         worldToGl = new Matrix4();
         screenToWorld = new Matrix3();
+
         touch = new Vector2();
         Gdx.input.setInputProcessor(this);
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.2f, 0.6f, 0.4f, 1);
+        Gdx.gl.glClearColor(1f, 1f, 1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
