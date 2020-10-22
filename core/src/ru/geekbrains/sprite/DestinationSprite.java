@@ -19,8 +19,7 @@ public class DestinationSprite extends Sprite {
         pos.set(worldBounds.pos);
     }
 
-    public boolean touchDown(Vector2 touch, Matrix3 screenToWorld) {
+    public void touchDown(Vector2 touch, Matrix3 screenToWorld) {
         pos.set(touch.x, Gdx.graphics.getHeight() - touch.y).mul(screenToWorld);
-        return false;
     }
 }
