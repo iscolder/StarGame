@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import ru.geekbrains.base.BaseScreen;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.sprite.Background;
+import ru.geekbrains.sprite.MainShip;
 import ru.geekbrains.sprite.SpriteRegistry;
 import ru.geekbrains.sprite.Star;
 
@@ -15,9 +16,9 @@ public class GameScreen extends BaseScreen {
     private static final int STAR_COUNT = 64;
 
     private TextureAtlas atlas;
-
     private Texture bg;
 
+    private MainShip mainShip;
 
     private final SpriteRegistry spriteRegistry;
 
@@ -37,6 +38,8 @@ public class GameScreen extends BaseScreen {
         for (int i = 0; i < STAR_COUNT; i++) {
             new Star(atlas, spriteRegistry);
         }
+
+        mainShip = new MainShip(atlas, spriteRegistry, worldBounds);
 
     }
 
@@ -66,16 +69,28 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public boolean keyDown(int keycode) {
-        return super.keyDown(keycode);
+        return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
+        if (keycode == 32) { // D
+            mainShip.right();
+        } else if (keycode == 29) { // A
+            mainShip.left();
+        } else if (keycode == 47) { // S
+            mainShip.stop();
+        }
         return super.keyUp(keycode);
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
+        if (touch.x > mainShip.getRight()) {
+            mainShip.right();
+        } else {
+            mainShip.left();
+        }
         return super.touchDown(touch, pointer, button);
     }
 

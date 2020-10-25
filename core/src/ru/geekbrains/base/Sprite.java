@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.math.Rect;
-import ru.geekbrains.sprite.SpriteRegistry;
 
 public class Sprite extends Rect {
 
@@ -20,9 +19,8 @@ public class Sprite extends Rect {
     }
 
     /**
-     *  Sets a height along with a width using the proportion ratio
-     *
-     * */
+     * Sets a height along with a width using the proportion ratio
+     */
     public void setHeightProportion(float height) {
         super.setHeight(height);
         float aspect = this.calculateAspect();
