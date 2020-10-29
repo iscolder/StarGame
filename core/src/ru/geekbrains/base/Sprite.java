@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.math.Rect;
+import ru.geekbrains.utils.Regions;
 
 public class Sprite extends Rect {
 
@@ -12,10 +13,17 @@ public class Sprite extends Rect {
     protected float scale = 1;
     protected TextureRegion[] regions;
     protected int frame = 0; // index of current texture region
+    protected boolean destroyed;
+
+    public Sprite() {}
 
     public Sprite(TextureRegion region) {
         this.regions = new TextureRegion[1];
         this.regions[0] = region;
+    }
+
+    public Sprite(TextureRegion region, int rows, int cols, int frames) {
+        this.regions = Regions.split(region, rows, cols, frames);
     }
 
     /**
@@ -64,6 +72,18 @@ public class Sprite extends Rect {
 
     public void setScale(float scale) {
         this.scale = scale;
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
+    public void destroy() {
+        destroyed = true;
+    }
+
+    public void flushDestroy() {
+        destroyed = false;
     }
 
 }

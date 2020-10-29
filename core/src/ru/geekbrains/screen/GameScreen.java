@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.base.BaseScreen;
 import ru.geekbrains.math.Rect;
+import ru.geekbrains.pool.BulletPool;
 import ru.geekbrains.sprite.Background;
 import ru.geekbrains.sprite.MainShip;
 import ru.geekbrains.sprite.SpriteRegistry;
@@ -18,89 +19,101 @@ public class GameScreen extends BaseScreen {
     private TextureAtlas atlas;
     private Texture bg;
 
+    private Background background;
+    private Star[] stars;
+    private BulletPool bulletPool;
     private MainShip mainShip;
-
-    private final SpriteRegistry spriteRegistry;
-
-    public GameScreen() {
-        this.spriteRegistry = new SpriteRegistry();
-    }
 
     @Override
     public void show() {
         super.show();
-
-        bg = new Texture("textures/bg.png");
-        new Background(bg, spriteRegistry);
-
         atlas = new TextureAtlas("textures/mainAtlas.tpack");
+        bg = new Texture("textures/bg.png");
 
+        background = new Background(bg);
+        stars = new Star[STAR_COUNT];
         for (int i = 0; i < STAR_COUNT; i++) {
-            new Star(atlas, spriteRegistry);
+            stars[i] = new Star(atlas);
         }
-
-        mainShip = new MainShip(atlas, spriteRegistry, worldBounds);
-
+        bulletPool = new BulletPool();
+        mainShip = new MainShip(atlas, bulletPool);
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
-        batch.begin();
-        spriteRegistry.execute(sprite -> {
-            sprite.update(delta);
-            checkCollision();
-            sprite.draw(batch);
-        });
-        batch.end();
+        update(delta);
+        checkCollision();
+        freeAllDestroyed();
+        draw();
     }
 
     @Override
     public void resize(Rect worldBounds) {
-        spriteRegistry.execute(s -> s.resize(worldBounds));
+        super.resize(worldBounds);
+        background.resize(worldBounds);
+        for (Star star : stars) {
+            star.resize(worldBounds);
+        }
+        mainShip.resize(worldBounds);
     }
 
     @Override
     public void dispose() {
         bg.dispose();
         atlas.dispose();
+        bulletPool.dispose();
         super.dispose();
     }
 
     @Override
     public boolean keyDown(int keycode) {
+        mainShip.keyDown(keycode);
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        if (keycode == 32) { // D
-            mainShip.right();
-        } else if (keycode == 29) { // A
-            mainShip.left();
-        } else if (keycode == 47) { // S
-            mainShip.stop();
-        }
-        return super.keyUp(keycode);
+        mainShip.keyUp(keycode);
+        return false;
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        if (touch.x > mainShip.getRight()) {
-            mainShip.right();
-        } else {
-            mainShip.left();
-        }
-        return super.touchDown(touch, pointer, button);
+        mainShip.touchDown(touch, pointer, button);
+        return false;
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
-        return super.touchUp(touch, pointer, button);
+        mainShip.touchUp(touch, pointer, button);
+        return false;
+    }
+
+    private void update(float delta) {
+        for (Star star : stars) {
+            star.update(delta);
+        }
+        bulletPool.updateActiveSprites(delta);
+        mainShip.update(delta);
     }
 
     private void checkCollision() {
 
     }
 
+    private void freeAllDestroyed() {
+        bulletPool.freeAllDestroyedActiveSprites();
+    }
+
+    private void draw() {
+        batch.begin();
+        background.draw(batch);
+        for (Star star : stars) {
+            star.draw(batch);
+        }
+        bulletPool.drawActiveSprites(batch);
+        mainShip.draw(batch);
+        batch.end();
+    }
 }
