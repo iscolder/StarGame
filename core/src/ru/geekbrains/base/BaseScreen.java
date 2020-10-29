@@ -15,19 +15,20 @@ import ru.geekbrains.math.Rect;
 public class BaseScreen implements Screen, InputProcessor {
 
     protected SpriteBatch batch;
-    private Rect screenBounds;
-    protected Rect worldBounds;
-    private Rect glBounds;
 
-    private Matrix4 worldToGl;
-    protected Matrix3 screenToWorld;
+    private Rect screenBounds; // Screen
+    protected Rect worldBounds; // World
+    private Rect glBounds; // Open GL
+
+    private Matrix4 worldToGl; // world to GL conversion matrix
+    protected Matrix3 screenToWorld; // screen to world conversion matrix
 
     private Vector2 touch;
 
     @Override
     public void show() {
-        System.out.println("show");
         batch = new SpriteBatch();
+
         screenBounds = new Rect();
         worldBounds = new Rect();
         glBounds = new Rect(0, 0, 1f, 1f);
@@ -126,7 +127,7 @@ public class BaseScreen implements Screen, InputProcessor {
         return this.touchUp(touch, pointer, button);
     }
 
-    private boolean touchUp(Vector2 touch, int pointer, int button) {
+    protected boolean touchUp(Vector2 touch, int pointer, int button) {
         System.out.println("touchUp touch.X = " + touch.x + " touch.Y = " + touch.y);
         return false;
     }
