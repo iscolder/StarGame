@@ -2,25 +2,24 @@ package ru.geekbrains.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.base.BaseScreen;
+import ru.geekbrains.math.Rect;
+import ru.geekbrains.sprite.DestinationSprite;
+import ru.geekbrains.sprite.MoveSprite;
 
 public class MoveScreen extends BaseScreen {
-    private Texture imgStart;
-    private Texture imgEnd;
-    private Vector2 currentPosition;
-    private Vector2 movementPosition;
-    private Vector2 move;
+
+    private MoveSprite move;
+    private DestinationSprite destination;
 
     @Override
     public void show() {
         super.show();
-        imgStart = new Texture("dot-start.png");
-        imgEnd = new Texture("dot-end.png");
-        currentPosition = new Vector2(0, 0);
-        movementPosition = new Vector2(0, 0);
-        move = new Vector2(0, 0);
+        this.move = new MoveSprite(new TextureRegion(new Texture("dot-start.png")));
+        this.destination = new DestinationSprite(new TextureRegion(new Texture("dot-end.png")));
     }
 
     @Override
@@ -28,15 +27,21 @@ public class MoveScreen extends BaseScreen {
         super.render(delta);
 
         batch.begin();
-        batch.draw(imgEnd, movementPosition.x, movementPosition.y);
-        batch.draw(imgStart, currentPosition.x, currentPosition.y);
+        destination.draw(batch);
+        move.draw(batch);
         batch.end();
 
-        if (currentPosition.epsilonEquals(movementPosition, 1)) {
-            move.setZero();
+        if (move.pos.epsilonEquals(destination.pos, 0.001f)) {
+            move.stop();
         }
 
-        currentPosition.add(move);
+        move.forward();
+    }
+
+    @Override
+    public void resize(Rect worldBounds) {
+        move.resize(worldBounds);
+        destination.resize(worldBounds);
     }
 
     @Override
@@ -46,11 +51,10 @@ public class MoveScreen extends BaseScreen {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        movementPosition.set(screenX, Gdx.graphics.getHeight() - screenY);
-        move.set(new Vector2(movementPosition).sub(currentPosition).nor());
+        destination.touchDown(new Vector2(screenX, screenY), screenToWorld);
+        move.setSpeed(new Vector2(destination.pos).sub(move.pos));
         return super.touchDown(screenX, screenY, pointer, button);
     }
-
 
     @Override
     public boolean keyDown(int keycode) {
