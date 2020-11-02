@@ -1,5 +1,6 @@
 package ru.geekbrains.base;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -14,6 +15,7 @@ public class Sprite extends Rect {
     protected TextureRegion[] regions;
     protected int frame = 0; // index of current texture region
     protected boolean destroyed;
+    protected Sound sound;
 
     public Sprite() {}
 
@@ -84,6 +86,14 @@ public class Sprite extends Rect {
 
     public void flushDestroy() {
         destroyed = false;
+    }
+
+    public void soundPlay() {
+        if (sound != null) sound.play(0.1f);
+    }
+
+    public void soundStop() {
+        if (sound != null) sound.dispose();
     }
 
 }
