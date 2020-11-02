@@ -37,8 +37,6 @@ public abstract class SpritesPool<T extends Sprite> {
     }
 
     public void dispose() {
-        activeObjects.forEach(Sprite::soundStop);
-        freeObjects.forEach(Sprite::soundStop);
         activeObjects.clear();
         freeObjects.clear();
     }

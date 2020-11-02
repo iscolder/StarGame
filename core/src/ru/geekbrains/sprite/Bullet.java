@@ -1,7 +1,5 @@
 package ru.geekbrains.sprite;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
@@ -18,7 +16,7 @@ public class Bullet extends Sprite {
     public Bullet() {
         v = new Vector2();
         regions = new TextureRegion[1];
-        this.sound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
+
     }
 
     public void set(
