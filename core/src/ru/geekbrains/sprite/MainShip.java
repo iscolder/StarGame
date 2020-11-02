@@ -35,6 +35,8 @@ public class MainShip extends Ship {
         this.bulletV.set(0, 0.5f);
         this.reloadInterval = RELOAD_INTERVAL;
         this.hp = HP;
+
+        this.visible = true;
     }
 
     @Override

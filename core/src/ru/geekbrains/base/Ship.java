@@ -27,6 +27,9 @@ public abstract class Ship extends Sprite {
 
     protected int hp;
 
+    protected boolean visible;
+    protected boolean boostCompleted;
+
     public Ship() {
         v = new Vector2();
         v0 = new Vector2();
@@ -47,6 +50,8 @@ public abstract class Ship extends Sprite {
         super.update(delta);
         pos.mulAdd(v, delta);
 
+        if (!visible) return;
+
         reloadTimer += delta;
         if (reloadTimer >= reloadInterval) {
             reloadTimer = 0;
@@ -54,7 +59,14 @@ public abstract class Ship extends Sprite {
         }
     }
 
-    private void shoot() {
+    @Override
+    public void destroy() {
+        destroyed = true;
+        visible = false;
+        boostCompleted = false;
+    }
+
+    protected void shoot() {
         Bullet bullet = bulletPool.obtain();
         bullet.set(this, bulletRegion, bulletPos, bulletV, worldBounds, damage, bulletHeight);
         bulletSound.play();
