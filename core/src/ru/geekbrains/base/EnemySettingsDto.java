@@ -16,6 +16,7 @@ public abstract class EnemySettingsDto {
     private float reloadInterval;
     private float height;
     private int hp;
+    private int boost;
 
     public TextureRegion[] getRegions() {
         return regions;
@@ -95,5 +96,13 @@ public abstract class EnemySettingsDto {
 
     public void setHp(int hp) {
         this.hp = hp;
+    }
+
+    public int getBoost() {
+        return boost;
+    }
+
+    public void setBoost(int boost) {
+        this.boost = boost;
     }
 }
