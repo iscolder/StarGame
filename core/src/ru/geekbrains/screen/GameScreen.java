@@ -17,7 +17,9 @@ import ru.geekbrains.pool.ExplosionPool;
 import ru.geekbrains.sprite.Background;
 import ru.geekbrains.sprite.Bullet;
 import ru.geekbrains.sprite.EnemyShip;
+import ru.geekbrains.sprite.GameOverMsg;
 import ru.geekbrains.sprite.MainShip;
+import ru.geekbrains.sprite.NewGameMsg;
 import ru.geekbrains.sprite.Star;
 import ru.geekbrains.utils.EnemyEmitter;
 
@@ -39,6 +41,11 @@ public class GameScreen extends BaseScreen {
     private MainShip mainShip;
     private EnemyEmitter enemyEmitter;
 
+    private boolean isGameOver;
+
+    private GameOverMsg gameOverMsg;
+    private NewGameMsg newGameMsg;
+
     @Override
     public void show() {
         super.show();
@@ -59,7 +66,16 @@ public class GameScreen extends BaseScreen {
         mainShip = new MainShip(atlas, bulletPool, explosionPool);
         enemyEmitter = new EnemyEmitter(worldBounds, enemyShipPool, enemyBulletSound, atlas);
 
+        gameOverMsg = new GameOverMsg(atlas);
+        newGameMsg = new NewGameMsg(atlas, this);
+
         music.setLooping(true);
+        music.play();
+    }
+
+    public void newGame() {
+        isGameOver = false;
+        mainShip.respawn();
         music.play();
     }
 
@@ -69,7 +85,19 @@ public class GameScreen extends BaseScreen {
         update(delta);
         checkCollision();
         freeAllDestroyed();
+        checkGameOver();
         draw();
+    }
+
+    private void checkGameOver() {
+        if(mainShip.isDestroyed() && !isGameOver) {
+            isGameOver = true;
+            enemyShipPool.dispose();
+            bulletPool.dispose();
+            explosionPool.dispose();
+            mainShip.dispose();
+            music.pause();
+        }
     }
 
     @Override
@@ -80,6 +108,8 @@ public class GameScreen extends BaseScreen {
             star.resize(worldBounds);
         }
         mainShip.resize(worldBounds);
+        gameOverMsg.resize(worldBounds);
+        newGameMsg.resize(worldBounds);
     }
 
     @Override
@@ -111,12 +141,14 @@ public class GameScreen extends BaseScreen {
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
         mainShip.touchDown(touch, pointer, button);
+        newGameMsg.touchDown(touch, pointer, button);
         return false;
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
         mainShip.touchUp(touch, pointer, button);
+        newGameMsg.touchUp(touch, pointer, button);
         return false;
     }
 
@@ -124,6 +156,9 @@ public class GameScreen extends BaseScreen {
         for (Star star : stars) {
             star.update(delta);
         }
+
+        if (isGameOver) return;
+
         bulletPool.updateActiveSprites(delta);
         explosionPool.updateActiveSprites(delta);
         enemyShipPool.updateActiveSprites(delta);
@@ -132,6 +167,9 @@ public class GameScreen extends BaseScreen {
     }
 
     private void checkCollision() {
+
+        if (isGameOver) return;
+
         List<EnemyShip> enemyShipList = enemyShipPool.getActiveObjects();
         for (EnemyShip enemyShip : enemyShipList) {
             if (enemyShip.isDestroyed()) continue;
@@ -162,6 +200,7 @@ public class GameScreen extends BaseScreen {
     }
 
     private void freeAllDestroyed() {
+        if (isGameOver) return;
         bulletPool.freeAllDestroyedActiveSprites();
         enemyShipPool.freeAllDestroyedActiveSprites();
         explosionPool.freeAllDestroyedActiveSprites();
@@ -174,11 +213,16 @@ public class GameScreen extends BaseScreen {
         for (Star star : stars) {
             star.draw(batch);
         }
-        mainShip.draw(batch);
-        enemyShipPool.drawActiveSprites(batch);
-        bulletPool.drawActiveSprites(batch);
-        explosionPool.drawActiveSprites(batch);
 
+        if (isGameOver) {
+            gameOverMsg.draw(batch);
+            newGameMsg.draw(batch);
+        } else {
+            mainShip.draw(batch);
+            enemyShipPool.drawActiveSprites(batch);
+            bulletPool.drawActiveSprites(batch);
+            explosionPool.drawActiveSprites(batch);
+        }
         batch.end();
     }
 }
