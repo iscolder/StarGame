@@ -48,8 +48,18 @@ public class MainShip extends Ship {
         setBottom(worldBounds.getBottom() + MARGIN);
     }
 
+    public void respawn() {
+        hp = HP;
+        this.bulletSound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
+        destroyed = false;
+        frame = 1;
+        visible = true;
+    }
+
     @Override
     public void update(float delta) {
+        if (isDestroyed()) return;
+
         bulletPos.set(pos.x, getTop());
         super.update(delta);
         if (getRight() > worldBounds.getRight()) {
