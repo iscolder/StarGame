@@ -15,7 +15,7 @@ public class MainShip extends Ship {
     private static final float SHIP_HEIGHT = 0.15f;
     private static final float MARGIN = 0.05f;
     private static final float RELOAD_INTERVAL = 0.5f;
-    private static final int HP = 1;
+    private static final int HP = 10;
 
     private static final int INVALID_POINTER = -1;
 
@@ -36,9 +36,21 @@ public class MainShip extends Ship {
         this.v0.set(0.5f, 0);
         this.bulletV.set(0, 0.5f);
         this.reloadInterval = RELOAD_INTERVAL;
-        this.hp = HP;
 
+        this.hp = HP;
         this.visible = true;
+    }
+
+    public void respawn(Rect worldBounds) {
+        this.hp = HP;
+        this.visible = true;
+        this.pos.x = worldBounds.pos.x;
+        pressedLeft = false;
+        pressedRight = false;
+        leftPointer = INVALID_POINTER;
+        rightPointer = INVALID_POINTER;
+        destroyed = false;
+        stop();
     }
 
     @Override
