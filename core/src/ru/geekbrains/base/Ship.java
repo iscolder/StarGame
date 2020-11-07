@@ -103,4 +103,12 @@ public abstract class Ship extends Sprite {
     public int getDamage() {
         return damage;
     }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public Vector2 getV() {
+        return v;
+    }
 }

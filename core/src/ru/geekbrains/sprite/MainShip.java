@@ -15,7 +15,7 @@ public class MainShip extends Ship {
     private static final float SHIP_HEIGHT = 0.15f;
     private static final float MARGIN = 0.05f;
     private static final float RELOAD_INTERVAL = 0.5f;
-    private static final int HP = 10;
+    private static final int HP = 100;
 
     private static final int INVALID_POINTER = -1;
 
@@ -71,12 +71,6 @@ public class MainShip extends Ship {
             setLeft(worldBounds.getLeft());
             stop();
         }
-//        2-й пример ограничений
-//        if (getLeft() > worldBounds.getRight()) {
-//            setRight(worldBounds.getLeft());
-//        } else if (getRight() < worldBounds.getLeft()) {
-//            setLeft(worldBounds.getRight());
-//        }
     }
 
     public void dispose() {
@@ -179,5 +173,7 @@ public class MainShip extends Ship {
                 bullet.getBottom() <= pos.y &&
                 bullet.getTop() >= getBottom();
     }
+
+
 
 }

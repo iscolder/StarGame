@@ -37,7 +37,7 @@ public class EnemyShip extends Ship {
         }
     }
 
-    public void set(EnemySettingsDto settings) {
+    public void set(EnemySettingsDto settings, int level) {
         this.normalSpeed = new Vector2(settings.getV0());
 
         Vector2 boostSpeed = new Vector2(settings.getV0().x, settings.getBoost() * settings.getV0().y);
@@ -48,7 +48,7 @@ public class EnemyShip extends Ship {
         this.bulletHeight = settings.getBulletHeight();
         this.bulletV.set(settings.getBulletV());
         this.bulletSound = settings.getBulletSound();
-        this.damage = settings.getDamage();
+        this.damage = settings.getDamage() * level;
         this.reloadInterval = settings.getReloadInterval();
         setHeightProportion(settings.getHeight());
         this.hp = settings.getHp();
