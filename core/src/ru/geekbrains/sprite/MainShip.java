@@ -17,13 +17,14 @@ public class MainShip extends Ship {
     private static final float RELOAD_INTERVAL = 0.5f;
     private static final int HP = 100;
 
-    private static final int INVALID_POINTER = -1;
+    private Vector2 v1;
 
     private boolean pressedLeft;
     private boolean pressedRight;
+    private boolean pressedUp;
+    private boolean pressedDown;
 
-    private int leftPointer = INVALID_POINTER;
-    private int rightPointer = INVALID_POINTER;
+    private Vector2 destination = new Vector2();
 
     public MainShip(TextureAtlas atlas, BulletPool bulletPool, ExplosionPool explosionPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
@@ -39,6 +40,8 @@ public class MainShip extends Ship {
 
         this.hp = HP;
         this.visible = true;
+
+        v1 = new Vector2(0, 0.5f);
     }
 
     public void respawn(Rect worldBounds) {
@@ -47,9 +50,10 @@ public class MainShip extends Ship {
         this.pos.x = worldBounds.pos.x;
         pressedLeft = false;
         pressedRight = false;
-        leftPointer = INVALID_POINTER;
-        rightPointer = INVALID_POINTER;
+        pressedUp = false;
+        pressedDown = false;
         destroyed = false;
+        reloadInterval = RELOAD_INTERVAL;
         stop();
     }
 
@@ -64,11 +68,20 @@ public class MainShip extends Ship {
     public void update(float delta) {
         bulletPos.set(pos.x, getTop());
         super.update(delta);
-        if (getRight() > worldBounds.getRight()) {
+
+        if (pos.epsilonEquals(destination, 0.001f)) {
+            stop();
+        } else if (getRight() > worldBounds.getRight()) {
             setRight(worldBounds.getRight());
             stop();
         } else if (getLeft() < worldBounds.getLeft()) {
             setLeft(worldBounds.getLeft());
+            stop();
+        } else if (getTop() > worldBounds.getTop()) {
+            setTop(worldBounds.getTop());
+            stop();
+        } else if (getBottom() < worldBounds.getBottom()) {
+            setBottom(worldBounds.getBottom());
             stop();
         }
     }
@@ -79,39 +92,8 @@ public class MainShip extends Ship {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        if (touch.x < worldBounds.pos.x) {
-            if (leftPointer != INVALID_POINTER) {
-                return false;
-            }
-            leftPointer = pointer;
-            moveLeft();
-        } else {
-            if (rightPointer != INVALID_POINTER) {
-                return false;
-            }
-            rightPointer = pointer;
-            moveRight();
-        }
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(Vector2 touch, int pointer, int button) {
-        if (pointer == leftPointer) {
-            leftPointer = INVALID_POINTER;
-            if (rightPointer != INVALID_POINTER) {
-                moveRight();
-            } else {
-                stop();
-            }
-        } else if (pointer == rightPointer) {
-            rightPointer = INVALID_POINTER;
-            if (leftPointer != INVALID_POINTER) {
-                moveLeft();
-            } else {
-                stop();
-            }
-        }
+        destination = new Vector2(touch);
+        v.set(touch.sub(pos));
         return false;
     }
 
@@ -127,6 +109,17 @@ public class MainShip extends Ship {
                 pressedRight = true;
                 moveRight();
                 break;
+
+            case Input.Keys.W:
+            case Input.Keys.UP:
+                pressedUp = true;
+                moveUp();
+                break;
+            case Input.Keys.S:
+            case Input.Keys.DOWN:
+                pressedDown = true;
+                moveDown();
+                break;
         }
         return false;
     }
@@ -138,6 +131,10 @@ public class MainShip extends Ship {
                 pressedLeft = false;
                 if (pressedRight) {
                     moveRight();
+                } else if (pressedUp) {
+                    moveUp();
+                } else if (pressedDown) {
+                    moveDown();
                 } else {
                     stop();
                 }
@@ -147,6 +144,38 @@ public class MainShip extends Ship {
                 pressedRight = false;
                 if (pressedLeft) {
                     moveLeft();
+                } else if (pressedUp) {
+                    moveUp();
+                } else if (pressedDown) {
+                    moveDown();
+                } else {
+                    stop();
+                }
+                break;
+
+            case Input.Keys.W:
+            case Input.Keys.UP:
+                pressedUp = false;
+                if (pressedDown) {
+                    moveDown();
+                } else if (pressedLeft) {
+                    moveLeft();
+                } else if (pressedRight) {
+                    moveRight();
+                } else {
+                    stop();
+                }
+                break;
+
+            case Input.Keys.S:
+            case Input.Keys.DOWN:
+                pressedDown = false;
+                if (pressedUp) {
+                    moveUp();
+                } else if (pressedLeft) {
+                    moveLeft();
+                } else if (pressedRight) {
+                    moveRight();
                 } else {
                     stop();
                 }
@@ -163,6 +192,14 @@ public class MainShip extends Ship {
         v.set(v0).rotate(180);
     }
 
+    private void moveUp() {
+        v.set(v1);
+    }
+
+    private void moveDown() {
+        v.set(v1).rotate(180);
+    }
+
     private void stop() {
         v.setZero();
     }
@@ -175,5 +212,16 @@ public class MainShip extends Ship {
     }
 
 
+    public void heal(int heal) {
+        hp += heal;
+    }
+
+    public void decreaseBulletReloadTime(float bulletInterval) {
+        this.reloadInterval -= bulletInterval;
+    }
+
+    public float getReloadInterval() {
+        return this.reloadInterval;
+    }
 
 }
