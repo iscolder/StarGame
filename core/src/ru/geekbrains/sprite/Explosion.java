@@ -11,17 +11,17 @@ public class Explosion extends Sprite {
     private float animateTimer;
     private static final float ANIMATE_INTERVAL = 0.02f;
 
-    private final Sound expslosionSound;
+    private final Sound explosionSound;
 
     public Explosion(TextureRegion region, int rows, int cols, int frames, Sound explosionSound) {
         super(region, rows, cols, frames);
-        this.expslosionSound = explosionSound;
+        this.explosionSound = explosionSound;
     }
 
     public void set(float height, Vector2 pos) {
         setHeightProportion(height);
         this.pos.set(pos);
-        expslosionSound.play();
+        explosionSound.play();
     }
 
     @Override

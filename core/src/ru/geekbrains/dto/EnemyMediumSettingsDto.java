@@ -13,7 +13,7 @@ public class EnemyMediumSettingsDto extends EnemySettingsDto {
     private static final float ENEMY_MEDIUM_HEIGHT = 0.15f;
     private static final float ENEMY_MEDIUM_BULLET_HEIGHT = 0.02f;
     private static final int ENEMY_MEDIUM_DAMAGE = 5;
-    private static final float ENEMY_MEDIUM_RELOAD_INTERVAL = 4f;
+    private static final float ENEMY_MEDIUM_RELOAD_INTERVAL = 2f;
     private static final int ENEMY_MEDIUM_HP = 5;
 
     public EnemyMediumSettingsDto(TextureAtlas atlas, Sound bulletSound) {
